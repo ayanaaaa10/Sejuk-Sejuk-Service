@@ -107,17 +107,34 @@ const TechnicianPage = () => {
         completedByTechnician: technicianName,
       });
 
-      const customerNumberRaw = selectedOrder.phone || "";
-      const customerNumber = customerNumberRaw.startsWith("60")
-        ? customerNumberRaw
-        : "60" + customerNumberRaw.replace(/^0/, "");
       const technician = technicianName;
       const orderId = selectedOrder.id;
       const now = new Date().toLocaleString();
 
-      const waMessage = `Hi ${selectedOrder.customer}, job ${orderId} has been completed by Technician ${technician} at ${now}. Please check and leave feedback. Thank you!`;
-      const waUrl = `https://wa.me/${customerNumber}?text=${encodeURIComponent(waMessage)}`;
-      window.open(waUrl, "_blank");
+      // Handle multiple phone numbers (string or array)
+      let customerNumbers = [];
+      if (Array.isArray(selectedOrder.phone)) {
+        customerNumbers = selectedOrder.phone;
+      } else if (typeof selectedOrder.phone === "string" && selectedOrder.phone.trim() !== "") {
+        customerNumbers = [selectedOrder.phone];
+      }
+
+      customerNumbers.forEach((num) => {
+        let cleanNum = num.replace(/[^\d]/g, ""); // Remove non-digit chars
+
+        // If number does not start with known country code, prepend default (e.g. Malaysia '60')
+        // Adjust the list as needed for your countries
+        const knownCountryCodes = ["60", "1", "44", "91", "81", "61"]; // add more if needed
+        const startsWithKnownCode = knownCountryCodes.some((code) => cleanNum.startsWith(code));
+
+        if (!startsWithKnownCode) {
+          cleanNum = "60" + cleanNum.replace(/^0+/, "");
+        }
+
+        const waMessage = `Hi ${selectedOrder.customer}, job ${orderId} has been completed by Technician ${technician} at ${now}. Please check and leave feedback. Thank you!`;
+        const waUrl = `https://wa.me/${cleanNum}?text=${encodeURIComponent(waMessage)}`;
+        window.open(waUrl, "_blank");
+      });
 
       try {
         await emailjs.send(

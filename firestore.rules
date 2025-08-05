@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow access to the users collection (for login/signup)
+    match /users/{userId} {
+      allow read, write: if true; // dev only
+    }
+
+    // ✅ Allow access to the orders collection
+    match /orders/{orderId} {
+      allow read, write, update: if true; // dev only
+    }
+    match /orders/{orderId}/fileURLs{
+      allow read, write, update: if true; // dev only
+    }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /orders/{orderId}/fileURLs/{fileName} {
+      allow write: if request.auth != null
+                   && firestore.get(/databases/(default)/documents/orders/$(orderId))
+                    .data.technician == request.auth.token.email_prefix;  // or however you store technician ID
+      allow read: if request.auth != null;
+    }
+  }
+}

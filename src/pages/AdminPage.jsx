@@ -110,10 +110,34 @@ function AdminPage() {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-4">
-            <Input label="Customer Name" name="customer" value={form.customer} onChange={handleChange} />
-            <Input label="Phone Number" name="phone" value={form.phone} onChange={handleChange} />
-            <Input label="Address" name="address" value={form.address} onChange={handleChange} />
-            <TextArea label="Problem Description" name="problem" value={form.problem} onChange={handleChange} />
+            <Input
+              label="Customer Name"
+              name="customer"
+              value={form.customer}
+              onChange={handleChange}
+              placeholder="e.g. John Doe"
+            />
+            <Input
+              label="Phone Number"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              placeholder="e.g. 0123456789"
+            />
+            <Input
+              label="Address"
+              name="address"
+              value={form.address}
+              onChange={handleChange}
+              placeholder="e.g. 123, Jalan ABC, KL"
+            />
+            <TextArea
+              label="Problem Description"
+              name="problem"
+              value={form.problem}
+              onChange={handleChange}
+              placeholder="Describe the issue..."
+            />
           </div>
 
           {/* Right Column */}
@@ -124,16 +148,32 @@ function AdminPage() {
               value={form.service}
               onChange={handleChange}
               options={["Repair", "Maintenance", "Installation"]}
+              placeholder="Select service type"
             />
-            <Input type="number" label="Price (RM)" name="price" value={form.price} onChange={handleChange} />
+            <Input
+              type="number"
+              label="Price (RM)"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              placeholder="e.g. 150"
+            />
             <Select
               label="Assigned Technician"
               name="technician"
               value={form.technician}
               onChange={handleChange}
               options={technicians}
+              placeholder="Select technician"
             />
-            <TextArea label="Additional Notes" name="notes" value={form.notes} onChange={handleChange} optional />
+            <TextArea
+              label="Additional Notes"
+              name="notes"
+              value={form.notes}
+              onChange={handleChange}
+              optional
+              placeholder="Optional notes for technician"
+            />
           </div>
 
           {/* Submit button full width */}
@@ -154,7 +194,7 @@ function AdminPage() {
 export default AdminPage;
 
 // Reusable Input Component
-const Input = ({ label, name, value, onChange, type = "text" }) => (
+const Input = ({ label, name, value, onChange, type = "text", placeholder }) => (
   <div>
     <label className="block text-gray-700 font-medium mb-1">{label}</label>
     <input
@@ -163,13 +203,14 @@ const Input = ({ label, name, value, onChange, type = "text" }) => (
       value={value}
       onChange={onChange}
       required
+      placeholder={placeholder}
       className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>
 );
 
 // Reusable TextArea
-const TextArea = ({ label, name, value, onChange, optional = false }) => (
+const TextArea = ({ label, name, value, onChange, optional = false, placeholder }) => (
   <div>
     <label className="block text-gray-700 font-medium mb-1">{label}</label>
     <textarea
@@ -178,13 +219,14 @@ const TextArea = ({ label, name, value, onChange, optional = false }) => (
       onChange={onChange}
       rows={3}
       required={!optional}
+      placeholder={placeholder}
       className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   </div>
 );
 
 // Reusable Select Component
-const Select = ({ label, name, value, onChange, options }) => (
+const Select = ({ label, name, value, onChange, options, placeholder }) => (
   <div>
     <label className="block text-gray-700 font-medium mb-1">{label}</label>
     <select
@@ -194,7 +236,7 @@ const Select = ({ label, name, value, onChange, options }) => (
       required
       className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
-      <option value="">-- Select --</option>
+      <option value="">{placeholder || "-- Select --"}</option>
       {options.map((opt, idx) => (
         <option key={idx} value={opt}>
           {opt}
